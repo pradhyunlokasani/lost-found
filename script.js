@@ -1,6 +1,6 @@
 // 🔒 Protect page
 if (!localStorage.getItem("user")) {
-  window.location.href = "login.html";
+  window.location.href = "index.html";
 }
 
 // 🔥 SUPABASE CONFIG
@@ -9,6 +9,7 @@ const supabaseKey = "sb_publishable_YRoTd89mkQwGzIX0QcaObg_WHo2sERX";
 
 const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
+// current user
 let currentUser = localStorage.getItem("user");
 
 /* ---------------- NAVBAR ---------------- */
@@ -18,12 +19,14 @@ const indicator = document.querySelector(".nav-indicator");
 window.addEventListener("load", () => {
   let page = window.location.pathname.split("/").pop();
 
-  links.forEach(link => {
-    if (link.getAttribute("href") === page) {
-      indicator.style.width = link.offsetWidth + "px";
-      indicator.style.left = link.offsetLeft + "px";
-    }
-  });
+  if (indicator) {
+    links.forEach(link => {
+      if (link.getAttribute("href") === page) {
+        indicator.style.width = link.offsetWidth + "px";
+        indicator.style.left = link.offsetLeft + "px";
+      }
+    });
+  }
 
   fetchLost();
   fetchFound();
@@ -39,11 +42,11 @@ if (lostForm) {
 
     let item = {
       user: currentUser,
-      name: lostName.value,
-      color: lostColor.value,
-      location: lostLocation.value,
-      description: lostDescription.value,
-      detail: lostDetail.value
+      name: document.getElementById("lostName").value,
+      color: document.getElementById("lostColor").value,
+      location: document.getElementById("lostLocation").value,
+      description: document.getElementById("lostDescription").value,
+      detail: document.getElementById("lostDetail").value
     };
 
     await supabase.from("lost_items").insert([item]);
@@ -84,11 +87,11 @@ if (foundForm) {
 
     let item = {
       user: currentUser,
-      name: foundName.value,
-      location: foundLocation.value,
-      description: foundDescription.value,
-      question: foundQuestion.value,
-      answer: foundAnswer.value
+      name: document.getElementById("foundName").value,
+      location: document.getElementById("foundLocation").value,
+      description: document.getElementById("foundDescription").value,
+      question: document.getElementById("foundQuestion").value,
+      answer: document.getElementById("foundAnswer").value
     };
 
     await supabase.from("found_items").insert([item]);
@@ -147,14 +150,14 @@ async function claimFound(id, question, answer) {
 
 /* ---------------- SEARCH ---------------- */
 function searchLost() {
-  let input = lostSearch.value.toLowerCase();
+  let input = document.getElementById("lostSearch").value.toLowerCase();
   document.querySelectorAll("#lostItems .card").forEach(card => {
     card.style.display = card.innerText.toLowerCase().includes(input) ? "block" : "none";
   });
 }
 
 function searchFound() {
-  let input = foundSearch.value.toLowerCase();
+  let input = document.getElementById("foundSearch").value.toLowerCase();
   document.querySelectorAll("#foundItems .card").forEach(card => {
     card.style.display = card.innerText.toLowerCase().includes(input) ? "block" : "none";
   });
