@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Lost</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="navbar">
+  <a href="home.html">Home</a>
+  <a href="lost.html">Lost</a>
+  <a href="found.html">Found</a>
+  <a href="help.html">Help</a>
+  <span class="nav-indicator"></span>
+</div>
+
+<div class="container">
+  <h2>Lost Items</h2>
+
+  <input type="text" id="lostSearch" placeholder="Search..." onkeyup="searchLost()">
+
+  <form id="lostForm">
+    <input id="lostName" placeholder="Item Name" required>
+    <input id="lostColor" placeholder="Color" required>
+    <input id="lostLocation" placeholder="Location" required>
+    <textarea id="lostDescription" placeholder="Description" required></textarea>
+    <input id="lostDetail" placeholder="Secret Detail" required>
+    <button>Submit</button>
+  </form>
+
+  <div id="lostItems"></div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

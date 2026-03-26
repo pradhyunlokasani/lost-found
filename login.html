@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="center">
+
+<div class="login-box">
+  <h2>🎓 Student Login</h2>
+
+  <form id="authForm">
+    <input type="email" id="email" placeholder="College Email" required>
+    
+    <input type="password" id="password" placeholder="Password" required>
+    
+    <small>Password must contain letter, number & special character</small>
+    
+    <button type="submit">Login / Sign Up</button>
+  </form>
+
+  <p id="msg" style="color:red;"></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script src="auth.js"></script>
+</body>
+</html>

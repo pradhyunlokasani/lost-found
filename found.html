@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Found</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="navbar">
+  <a href="home.html">Home</a>
+  <a href="lost.html">Lost</a>
+  <a href="found.html">Found</a>
+  <a href="help.html">Help</a>
+  <span class="nav-indicator"></span>
+</div>
+
+<div class="container">
+  <h2>Found Items</h2>
+
+  <input type="text" id="foundSearch" placeholder="Search..." onkeyup="searchFound()">
+
+  <form id="foundForm">
+    <input id="foundName" placeholder="Item Name" required>
+    <input id="foundLocation" placeholder="Location" required>
+    <textarea id="foundDescription" placeholder="Description" required></textarea>
+    <input id="foundQuestion" placeholder="Verification Question" required>
+    <input id="foundAnswer" placeholder="Answer" required>
+    <button>Submit</button>
+  </form>
+
+  <div id="foundItems"></div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
