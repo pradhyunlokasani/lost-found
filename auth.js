@@ -2,7 +2,11 @@
 const supabaseUrl = "https://kilcwapslcnjrchhyfm.supabase.co";
 const supabaseKey = "sb_publishable_YRoTd89mkQwGzIX0QcaObg_WHo2sERX";
 
-const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+if (!window.supabaseClient) {
+  window.supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+}
+
+const supabase = window.supabaseClient;
 
 const form = document.getElementById("authForm");
 
