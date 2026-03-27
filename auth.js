@@ -1,5 +1,5 @@
 // 🔥 SUPABASE CONFIG
-const supabaseUrl = "https://kilcwapslcnjcrhhyfm.supabase.co";
+const supabaseUrl = "https://kilcvwapslcnjcrhhyfm.supabase.co";
 const supabaseKey = "sb_publishable_YRoTd89mkQwGzIX0QcaObg_WHo2sERX";
 
 // ✅ CREATE ONLY ONCE
