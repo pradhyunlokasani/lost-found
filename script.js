@@ -10,15 +10,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const supabaseKey = "sb_publishable_YRoTd89mkQwGzIX0QcaObg_WHo2sERX";
 
   if (!window.supabaseClient) {
-    window.supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
-  }
+  window.supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+}
 
   const supabase = window.supabaseClient;
 
   let currentUser = localStorage.getItem("user");
 
-// current user
-let currentUser = localStorage.getItem("user");
 
 /* ---------------- NAVBAR ---------------- */
 const links = document.querySelectorAll(".navbar a");
