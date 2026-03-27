@@ -2,14 +2,13 @@
 const supabaseUrl = "https://kilcwapslcnjrchhyfm.supabase.co";
 const supabaseKey = "sb_publishable_YRoTd89mkQwGzIX0QcaObg_WHo2sERX";
 
-// ✅ SINGLE INSTANCE ONLY
+// ✅ CREATE ONLY ONCE
 if (!window.supabaseClient) {
   window.supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 }
 
 const supabase = window.supabaseClient;
 
-// ✅ WAIT FOR DOM
 document.addEventListener("DOMContentLoaded", () => {
 
   const form = document.getElementById("authForm");
@@ -29,17 +28,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const pattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&]).{6,}$/;
     if (!pattern.test(password)) {
-      msg.textContent = "Password must have letter, number & special character!";
+      msg.textContent = "Password must be strong!";
       return;
     }
 
-    let { data, error } = await supabase
+    const { data, error } = await supabase
       .from("users")
       .select("*")
       .eq("email", email);
 
     if (error) {
-      msg.textContent = "Error connecting to server!";
+      msg.textContent = "Server error!";
       return;
     }
 
@@ -48,21 +47,21 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem("user", email);
         window.location.href = "home.html";
       } else {
-        msg.textContent = "Incorrect password!";
+        msg.textContent = "Wrong password!";
       }
     } else {
-      let { error: insertError } = await supabase
+      const { error: insertError } = await supabase
         .from("users")
         .insert([{ email, password }]);
 
       if (insertError) {
-        msg.textContent = "Error creating account!";
+        msg.textContent = "Signup failed!";
         return;
       }
 
       localStorage.setItem("user", email);
       msg.style.color = "green";
-      msg.textContent = "Account created! Redirecting...";
+      msg.textContent = "Account created!";
 
       setTimeout(() => {
         window.location.href = "home.html";
