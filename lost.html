@@ -1,38 +1,77 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Lost Items</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lost Items — Lost & Found Portal</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="navbar">
+<nav class="navbar">
   <a href="home.html">Home</a>
-  <a href="lost.html">Lost</a>
+  <a href="lost.html" style="color: var(--amber);">Lost</a>
   <a href="found.html">Found</a>
   <a href="help.html">Help</a>
-  <span class="nav-indicator"></span>
-</div>
+  <button class="logout-btn btn" onclick="logout()" style="margin-left:auto;">Logout</button>
+</nav>
 
 <div class="container">
-  <h2>Report Lost Item</h2>
+
+  <!-- Report Form -->
+  <div class="section-header" style="margin-top: 10px;">
+    <h2>📦 Report a Lost Item</h2>
+  </div>
+
   <form id="lostForm">
-    <input id="lostName" placeholder="Item Name (e.g. Blue Wallet)" required>
-    <input id="lostColor" placeholder="Color" required>
-    <input id="lostLocation" placeholder="Last Seen Location" required>
-    <textarea id="lostDescription" placeholder="General Description"></textarea>
-    <input id="lostDetail" placeholder="Secret Identifying Detail (e.g. 'Sticker of a cat on back')" required>
+    <label class="form-label">Item Name *</label>
+    <input id="lostName" placeholder="e.g. Blue Wallet, Black Umbrella" required>
+
+    <label class="form-label">Color *</label>
+    <input id="lostColor" placeholder="e.g. Black, Navy Blue" required>
+
+    <label class="form-label">Last Seen Location *</label>
+    <input id="lostLocation" placeholder="e.g. Library 2nd Floor, Canteen" required>
+
+    <label class="form-label">Description</label>
+    <textarea id="lostDescription" placeholder="Describe the item (size, brand, markings…) — don't mention the secret detail here"></textarea>
+
+    <label class="form-label">🔒 Secret Identifying Detail * <small style="text-transform:none; font-size:.78rem;">(only you know this — used to verify finder)</small></label>
+    <input id="lostDetail" placeholder="e.g. 'Sticker of a cat on the back'" required>
+
     <button type="submit">Post Lost Item</button>
   </form>
 
   <hr>
-  <h2>Lost Items Registry</h2>
-  <input type="text" id="lostSearch" placeholder="Search items..." onkeyup="searchItems('lostSearch', 'lostItems')">
-  
-  <div id="lostItems"></div>
+
+  <!-- Registry -->
+  <div class="section-header">
+    <h2>Lost Items Registry</h2>
+    <span class="item-count" id="lostCount">Loading…</span>
+  </div>
+
+  <div class="search-wrap">
+    <input type="text" id="lostSearch" placeholder="Search by name or location…"
+           onkeyup="searchItems('lostSearch', 'lostItems')">
+  </div>
+
+  <div id="lostItems">
+    <div class="loader">
+      <div class="loader-dot"></div>
+      <div class="loader-dot"></div>
+      <div class="loader-dot"></div>
+    </div>
+  </div>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 <script src="script.js"></script>
+<script>
+  function logout() {
+    localStorage.removeItem("user");
+    window.location.href = "index.html";
+  }
+</script>
 </body>
 </html>
