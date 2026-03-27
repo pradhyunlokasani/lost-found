@@ -1,36 +1,84 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Help & Feedback</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Help & Feedback — Lost & Found Portal</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="navbar">
+<nav class="navbar">
   <a href="home.html">Home</a>
   <a href="lost.html">Lost</a>
   <a href="found.html">Found</a>
-  <a href="help.html">Help</a>
-  <span class="nav-indicator"></span>
-</div>
+  <a href="help.html" style="color: var(--amber);">Help</a>
+  <button class="logout-btn btn" onclick="logout()" style="margin-left:auto;">Logout</button>
+</nav>
 
-<div class="container">
-  <div class="center-box" style="margin-top: 20px;">
-    <h2>Contact Support</h2>
-    <p>📞 <b>Phone:</b> 8179971950</p>
-    <p>📧 <b>Email:</b> pradhyunlokasani@gmail.com</p>
-    
-    <hr>
-    
-    <h3>Submit Feedback</h3>
-    <form id="feedbackForm">
-      <textarea id="feedbackText" placeholder="How can we improve this portal?" required></textarea>
-      <button type="submit">Submit Feedback</button>
+<div class="container" style="max-width: 620px;">
+
+  <div class="section-header" style="margin-top:10px;">
+    <h2>Help &amp; Support</h2>
+  </div>
+
+  <!-- Contact Card -->
+  <div class="contact-card">
+    <h2>📞 Contact Us</h2>
+    <div class="contact-row">
+      <span class="icon">📱</span>
+      <div>
+        <div style="font-weight:600; font-size:.85rem; color: var(--muted); text-transform:uppercase; letter-spacing:.05em;">Phone</div>
+        <a href="tel:8179971950">8179971950</a>
+      </div>
+    </div>
+    <div class="contact-row">
+      <span class="icon">📧</span>
+      <div>
+        <div style="font-weight:600; font-size:.85rem; color: var(--muted); text-transform:uppercase; letter-spacing:.05em;">Email</div>
+        <a href="mailto:pradhyunlokasani@gmail.com">pradhyunlokasani@gmail.com</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="contact-card">
+    <h2>❓ How It Works</h2>
+    <div style="margin-top: 14px; display: flex; flex-direction: column; gap: 14px;">
+      <div>
+        <h3 style="color: var(--navy); margin-bottom: 4px;">Lost something?</h3>
+        <p style="color: var(--muted); font-size:.93rem; line-height:1.6;">Post it on the <a href="lost.html" style="color:var(--amber-dark); font-weight:600;">Lost</a> page with a secret identifying detail. If someone finds it and claims it, you'll see their name on your card.</p>
+      </div>
+      <div>
+        <h3 style="color: var(--navy); margin-bottom: 4px;">Found something?</h3>
+        <p style="color: var(--muted); font-size:.93rem; line-height:1.6;">Post it on the <a href="found.html" style="color:var(--amber-dark); font-weight:600;">Found</a> page with a verification question. Only the true owner will know the answer.</p>
+      </div>
+      <div>
+        <h3 style="color: var(--navy); margin-bottom: 4px;">Verification system</h3>
+        <p style="color: var(--muted); font-size:.93rem; line-height:1.6;">Claims require answering a secret question set by the poster. This prevents false claims and ensures items go to their rightful owners.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Feedback Form -->
+  <div class="contact-card">
+    <h2>💬 Submit Feedback</h2>
+    <form id="feedbackForm" style="box-shadow:none; border:none; padding:0; margin:14px 0 0; background:transparent;">
+      <label class="form-label">Your Message</label>
+      <textarea id="feedbackText" placeholder="How can we improve this portal? Share bugs, ideas, or suggestions…" required style="min-height:110px;"></textarea>
+      <button type="submit" class="btn-submit">Send Feedback →</button>
     </form>
   </div>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 <script src="script.js"></script>
+<script>
+  function logout() {
+    localStorage.removeItem("user");
+    window.location.href = "index.html";
+  }
+</script>
 </body>
 </html>
