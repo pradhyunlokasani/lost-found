@@ -1,26 +1,34 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Login</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login — Lost & Found Portal</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="center">
+<body style="justify-content: center;">
 
 <div class="login-box">
-  <h2>🎓 Student Login</h2>
+  <div style="text-align:center; margin-bottom: 28px;">
+    <div style="font-size: 2.8rem; margin-bottom: 10px;">🎓</div>
+    <h2>Lost &amp; Found Portal</h2>
+    <p class="subtitle">Use your college email to login or create an account</p>
+  </div>
 
-  <form id="authForm">
-    <input type="email" id="email" placeholder="College Email" required>
-    
-    <input type="password" id="password" placeholder="Password" required>
-    
-    <small>Password must contain letter, number & special character</small>
-    
-    <button type="submit">Login / Sign Up</button>
+  <form id="authForm" style="box-shadow:none; border:none; padding:0; margin:0; background:transparent;">
+    <label class="form-label">College Email</label>
+    <input type="email" id="email" placeholder="yourname@student.nitw.ac.in" required autocomplete="email">
+
+    <label class="form-label">Password</label>
+    <input type="password" id="password" placeholder="Min 6 chars with letter, number & symbol" required>
+    <small>⚠️ Must contain a letter, number &amp; special character (e.g. @, !, #)</small>
+
+    <button type="submit">Login / Sign Up →</button>
   </form>
 
-  <p id="msg" style="color:red;"></p>
+  <p id="msg" style="text-align:center; margin-top:14px; font-weight:600; min-height:20px;"></p>
 </div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 <script src="auth.js"></script>
 </body>
