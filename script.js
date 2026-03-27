@@ -1,16 +1,21 @@
-// 🔒 Protect page
-if (!localStorage.getItem("user")) {
-  window.location.href = "index.html";
-}
+document.addEventListener("DOMContentLoaded", () => {
 
-// 🔥 SUPABASE CONFIG
-const supabaseUrl = "https://kilcwapslcnjrchhyfm.supabase.co";
-const supabaseKey = "sb_publishable_YRoTd89mkQwGzIX0QcaObg_WHo2sERX";
-if (!window.supabaseClient) {
-  window.supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
-}
+  // 🔒 Protect page
+  if (!localStorage.getItem("user")) {
+    window.location.href = "index.html";
+  }
 
-const supabase = window.supabaseClient;
+  // 🔥 SUPABASE CONFIG
+  const supabaseUrl = "https://kilcwapslcnjrchhyfm.supabase.co";
+  const supabaseKey = "sb_publishable_YRoTd89mkQwGzIX0QcaObg_WHo2sERX";
+
+  if (!window.supabaseClient) {
+    window.supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+  }
+
+  const supabase = window.supabaseClient;
+
+  let currentUser = localStorage.getItem("user");
 
 // current user
 let currentUser = localStorage.getItem("user");
@@ -165,3 +170,4 @@ function searchFound() {
     card.style.display = card.innerText.toLowerCase().includes(input) ? "block" : "none";
   });
 }
+  });
