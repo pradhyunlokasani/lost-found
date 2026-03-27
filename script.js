@@ -1,134 +1,132 @@
-// 🔥 SUPABASE CONFIGURATION
 const supabaseUrl = "https://kilcvwapslcnjcrhhyfm.supabase.co";
 const supabaseKey = "sb_publishable_YRoTd89mkQwGzIX0QcaObg_WHo2sERX";
 
-// Initialize Supabase Globally
 if (!window.supabaseClient) {
     window.supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 }
 const supabase = window.supabaseClient;
+const currentUser = localStorage.getItem("user");
 
-/* ---------------- GLOBAL FUNCTIONS (Accessible by HTML) ---------------- */
+/* ---------------- GLOBAL FUNCTIONS (Search & Claim) ---------------- */
 
-// 🔍 Search Functionality
-window.searchLost = function() {
-    let input = document.getElementById("lostSearch").value.toLowerCase();
-    document.querySelectorAll("#lostItems .card").forEach(card => {
+window.searchItems = function(inputId, containerId) {
+    let input = document.getElementById(inputId).value.toLowerCase();
+    document.querySelectorAll(`#${containerId} .card`).forEach(card => {
         card.style.display = card.innerText.toLowerCase().includes(input) ? "block" : "none";
     });
 };
 
-window.searchFound = function() {
-    let input = document.getElementById("foundSearch").value.toLowerCase();
-    document.querySelectorAll("#foundItems .card").forEach(card => {
-        card.style.display = card.innerText.toLowerCase().includes(input) ? "block" : "none";
-    });
-};
-
-// 🔨 Claiming Logic
-window.claimLost = async function(id, detail) {
-    let ans = prompt("Enter identifying detail (e.g., scratch location, sticker):");
+window.claimItem = async function(id, table, secretField, secretValue) {
+    let ans = prompt(`Enter the ${secretField} to verify:`);
     if (!ans) return;
 
-    if (ans.trim().toLowerCase() === detail.trim().toLowerCase()) {
-        const { error } = await supabase.from("lost_items").delete().eq("id", id);
+    if (ans.trim().toLowerCase() === secretValue.trim().toLowerCase()) {
+        // Instead of deleting, we update the row with the current user's email
+        const { error } = await supabase
+            .from(table)
+            .update({ claimed_by: currentUser })
+            .eq("id", id);
+
         if (error) {
-            alert("Error claiming item.");
+            alert("Error updating status.");
         } else {
-            alert("Item marked as recovered! 🎉");
-            fetchLost(); // Refresh list without reloading page
+            alert("Verified! The owner has been notified with your email. ✅");
+            location.reload(); 
         }
     } else {
-        alert("Verification failed. Wrong detail! ❌");
+        alert("Wrong details! ❌");
     }
 };
 
-window.claimFound = async function(id, question, answer) {
-    let ans = prompt(question);
-    if (!ans) return;
+/* ---------------- DATA FETCHING ---------------- */
 
-    if (ans.trim().toLowerCase() === answer.trim().toLowerCase()) {
-        const { error } = await supabase.from("found_items").delete().eq("id", id);
-        if (error) {
-            alert("Error claiming item.");
-        } else {
-            alert("Owner verified! Item claimed. 🎉");
-            fetchFound(); // Refresh list without reloading page
-        }
-    } else {
-        alert("Wrong answer! ❌");
-    }
-};
-
-// 📥 Data Fetching Functions
 window.fetchLost = async function() {
-    const lostItemsDiv = document.getElementById("lostItems");
-    if (!lostItemsDiv) return;
+    const div = document.getElementById("lostItems");
+    if (!div) return;
 
-    let { data, error } = await supabase.from("lost_items").select("*");
-    if (error) return console.error(error);
+    // 1. Show items that are NOT claimed yet
+    let { data: activeItems } = await supabase.from("lost_items").select("*").is("claimed_by", null);
+    
+    // 2. Show items YOU posted that WERE claimed (so you see the contact info)
+    let { data: myClaimedUpdates } = await supabase.from("lost_items").select("*").eq("user", currentUser).not("claimed_by", "is", null);
 
-    lostItemsDiv.innerHTML = "";
-    data.forEach(item => {
-        lostItemsDiv.innerHTML += `
+    div.innerHTML = "";
+
+    // Render Notifications First
+    myClaimedUpdates?.forEach(item => {
+        div.innerHTML += `
+            <div class="card owner-update">
+                <h3>✅ Item Found!</h3>
+                <p>Your <b>${item.name}</b> was found by:</p>
+                <p><b>${item.claimed_by}</b></p>
+                <p>Contact them to get it back!</p>
+            </div>`;
+    });
+
+    // Render Searchable Items
+    activeItems?.forEach(item => {
+        div.innerHTML += `
             <div class="card">
                 <h3>📦 ${item.name}</h3>
-                <p><b>Color:</b> ${item.color}</p>
-                <p><b>Location:</b> ${item.location}</p>
+                <p><b>Color:</b> ${item.color} | <b>Loc:</b> ${item.location}</p>
                 <p>${item.description}</p>
-                <p><small>Posted by: ${item.user}</small></p>
-                <button onclick="claimLost(${item.id}, '${item.detail.replace(/'/g, "\\'")}')">Claim</button>
+                <button onclick="claimItem(${item.id}, 'lost_items', 'Secret Detail', '${item.detail.replace(/'/g, "\\'")}')">I Found This</button>
             </div>`;
     });
 };
 
 window.fetchFound = async function() {
-    const foundItemsDiv = document.getElementById("foundItems");
-    if (!foundItemsDiv) return;
+    const div = document.getElementById("foundItems");
+    if (!div) return;
 
-    let { data, error } = await supabase.from("found_items").select("*");
-    if (error) return console.error(error);
+    let { data: activeFound } = await supabase.from("found_items").select("*").is("claimed_by", null);
+    let { data: myFoundUpdates } = await supabase.from("found_items").select("*").eq("user", currentUser).not("claimed_by", "is", null);
 
-    foundItemsDiv.innerHTML = "";
-    data.forEach(item => {
-        foundItemsDiv.innerHTML += `
+    div.innerHTML = "";
+
+    myFoundUpdates?.forEach(item => {
+        div.innerHTML += `
+            <div class="card owner-update">
+                <h3>🤝 Claimed!</h3>
+                <p><b>${item.name}</b> was claimed by:</p>
+                <p><b>${item.claimed_by}</b></p>
+            </div>`;
+    });
+
+    activeFound?.forEach(item => {
+        div.innerHTML += `
             <div class="card">
                 <h3>✨ ${item.name}</h3>
                 <p><b>Location:</b> ${item.location}</p>
-                <p>${item.description}</p>
                 <p><b>Question:</b> ${item.question}</p>
-                <p><small>Posted by: ${item.user}</small></p>
-                <button onclick="claimFound(${item.id}, '${item.question.replace(/'/g, "\\'")}', '${item.answer.replace(/'/g, "\\'")}')">Answer to Claim</button>
+                <button onclick="claimItem(${item.id}, 'found_items', 'Answer', '${item.answer.replace(/'/g, "\\'")}')">This is Mine</button>
             </div>`;
     });
 };
 
-/* ---------------- PAGE INITIALIZATION ---------------- */
+/* ---------------- INITIALIZATION ---------------- */
 
 document.addEventListener("DOMContentLoaded", () => {
-    let currentUser = localStorage.getItem("user");
-
-    // 🔒 Protect pages (except index.html)
     if (!currentUser && !window.location.pathname.includes("index.html")) {
         window.location.href = "index.html";
-        return;
     }
 
-    // 📱 Navbar Indicator Logic
-    const links = document.querySelectorAll(".navbar a");
-    const indicator = document.querySelector(".nav-indicator");
-    let page = window.location.pathname.split("/").pop() || "home.html";
-
-    if (indicator) {
-        links.forEach(link => {
-            if (link.getAttribute("href") === page) {
-                indicator.style.width = link.offsetWidth + "px";
-                indicator.style.left = link.offsetLeft + "px";
+    // Handle Feedback Form
+    const feedbackForm = document.getElementById("feedbackForm");
+    if (feedbackForm) {
+        feedbackForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const msg = document.getElementById("feedbackText").value;
+            const { error } = await supabase.from("feedback").insert([{ user: currentUser, message: msg }]);
+            if (error) alert("Error sending feedback.");
+            else {
+                alert("Feedback sent! Thank you. ❤️");
+                feedbackForm.reset();
             }
         });
     }
 
-    // 📝 Form Submissions
+    // Handle Lost/Found Form Submissions (existing logic)
     const lostForm = document.getElementById("lostForm");
     if (lostForm) {
         lostForm.addEventListener("submit", async (e) => {
@@ -165,7 +163,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Initial Data Load
     fetchLost();
     fetchFound();
 });
