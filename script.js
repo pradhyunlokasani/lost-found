@@ -1,13 +1,15 @@
+// 🔥 1. INITIALIZATION (Only Declare 'supabase' ONCE here)
 const supabaseUrl = "https://kilcvwapslcnjcrhhyfm.supabase.co";
 const supabaseKey = "sb_publishable_YRoTd89mkQwGzIX0QcaObg_WHo2sERX";
 
+// Check if it exists before creating to prevent redeclaration errors
 if (!window.supabaseClient) {
     window.supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 }
 const supabase = window.supabaseClient;
 const currentUser = localStorage.getItem("user");
 
-/* --- GLOBAL FUNCTIONS --- */
+/* ---------------- 2. GLOBAL FUNCTIONS (For Search & Claim) ---------------- */
 
 window.searchItems = function(inputId, containerId) {
     let input = document.getElementById(inputId).value.toLowerCase();
@@ -17,7 +19,7 @@ window.searchItems = function(inputId, containerId) {
 };
 
 window.claimItem = async function(id, table, secretField, secretValue) {
-    let ans = prompt(`Enter the ${secretField}:`);
+    let ans = prompt(`To verify, enter the ${secretField}:`);
     if (!ans) return;
 
     if (ans.trim().toLowerCase() === secretValue.trim().toLowerCase()) {
@@ -32,14 +34,17 @@ window.claimItem = async function(id, table, secretField, secretValue) {
     }
 };
 
-/* --- FETCHING DATA --- */
+/* ---------------- 3. DATA FETCHING ---------------- */
 
 window.fetchLost = async function() {
     const div = document.getElementById("lostItems");
     if (!div) return;
 
     let { data, error } = await supabase.from("lost_items").select("*");
-    if (error) return console.error(error);
+    if (error) {
+        console.error("Fetch Lost Error:", error);
+        return;
+    }
 
     div.innerHTML = "";
     data.forEach(item => {
@@ -48,7 +53,6 @@ window.fetchLost = async function() {
                 <div class="card">
                     <h3>📦 ${item.name}</h3>
                     <p><b>Loc:</b> ${item.location}</p>
-                    <p>${item.description}</p>
                     <button onclick="claimItem(${item.id}, 'lost_items', 'Secret Detail', '${item.detail}')">I Found This</button>
                 </div>`;
         } else if (item.user === currentUser) {
@@ -66,7 +70,10 @@ window.fetchFound = async function() {
     if (!div) return;
 
     let { data, error } = await supabase.from("found_items").select("*");
-    if (error) return console.error(error);
+    if (error) {
+        console.error("Fetch Found Error:", error);
+        return;
+    }
 
     div.innerHTML = "";
     data.forEach(item => {
@@ -75,7 +82,6 @@ window.fetchFound = async function() {
                 <div class="card">
                     <h3>✨ ${item.name}</h3>
                     <p><b>Loc:</b> ${item.location}</p>
-                    <p><b>Question:</b> ${item.question}</p>
                     <button onclick="claimItem(${item.id}, 'found_items', 'Answer', '${item.answer}')">This is Mine</button>
                 </div>`;
         } else if (item.user === currentUser) {
@@ -88,14 +94,16 @@ window.fetchFound = async function() {
     });
 };
 
-/* --- INIT --- */
+/* ---------------- 4. PAGE INITIALIZATION ---------------- */
 
 document.addEventListener("DOMContentLoaded", () => {
+    // 🔒 Auth Guard
     if (!currentUser && !window.location.pathname.includes("index.html")) {
         window.location.href = "index.html";
         return;
     }
 
+    // Feedback Submission
     const feedbackForm = document.getElementById("feedbackForm");
     if (feedbackForm) {
         feedbackForm.addEventListener("submit", async (e) => {
@@ -107,6 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // Form Submissions
     const lostForm = document.getElementById("lostForm");
     if (lostForm) {
         lostForm.addEventListener("submit", async (e) => {
@@ -143,6 +152,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // Initial Load
     fetchLost();
     fetchFound();
 });
