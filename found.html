@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Found</title>
+  <title>Found Items</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -15,19 +15,20 @@
 </div>
 
 <div class="container">
-  <h2>Found Items</h2>
-
-  <input type="text" id="foundSearch" placeholder="Search found items..." onkeyup="searchItems('foundSearch', 'foundItems')">
-
+  <h2>Report Found Item</h2>
   <form id="foundForm">
     <input id="foundName" placeholder="Item Name" required>
-    <input id="foundLocation" placeholder="Location" required>
-    <textarea id="foundDescription" placeholder="Description" required></textarea>
-    <input id="foundQuestion" placeholder="Verification Question" required>
-    <input id="foundAnswer" placeholder="Answer" required>
-    <button>Submit</button>
+    <input id="foundLocation" placeholder="Found At Location" required>
+    <textarea id="foundDescription" placeholder="Description (Don't mention secret details)"></textarea>
+    <input id="foundQuestion" placeholder="Verification Question (e.g. 'What is the lockscreen wallpaper?')" required>
+    <input id="foundAnswer" placeholder="Correct Answer" required>
+    <button type="submit">Post Found Item</button>
   </form>
 
+  <hr>
+  <h2>Found Items Registry</h2>
+  <input type="text" id="foundSearch" placeholder="Search items..." onkeyup="searchItems('foundSearch', 'foundItems')">
+  
   <div id="foundItems"></div>
 </div>
 
