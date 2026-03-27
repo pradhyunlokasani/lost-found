@@ -7,8 +7,6 @@ if (!localStorage.getItem("user")) {
 const supabaseUrl = "https://kilcwapslcnjrchhyfm.supabase.co";
 const supabaseKey = "sb_publishable_YRoTd89mkQwGzIX0QcaObg_WHo2sERX";
 
-const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-
 // current user
 let currentUser = localStorage.getItem("user");
 
