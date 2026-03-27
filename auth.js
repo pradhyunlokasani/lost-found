@@ -7,7 +7,7 @@ if (!window.supabaseClient) {
   window.supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 }
 
-const supabase = window.supabaseClient;
+var supabase = window.supabaseClient;
 
 document.addEventListener("DOMContentLoaded", () => {
 
