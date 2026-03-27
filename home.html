@@ -1,25 +1,78 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Home</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home — Lost & Found Portal</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="navbar">
+<nav class="navbar">
   <a href="home.html">Home</a>
   <a href="lost.html">Lost</a>
   <a href="found.html">Found</a>
   <a href="help.html">Help</a>
-  <div class="underline"></div>
+  <button class="logout-btn btn" onclick="logout()" style="margin-left:auto;">Logout</button>
+</nav>
+
+<div class="center-box" style="margin-top: 50px;">
+  <div style="font-size: 3rem; margin-bottom: 14px;">🔍</div>
+  <h1>Welcome to Lost &amp; Found Portal</h1>
+  <p id="welcomeMsg">Report lost items or help others reunite with their belongings.</p>
+
+  <div class="hero-actions">
+    <a href="lost.html" class="btn btn-primary">📦 Report Lost Item</a>
+    <a href="found.html" class="btn btn-outline">✨ Report Found Item</a>
+  </div>
 </div>
 
-<div class="center-box fade-in">
-  <h1>Welcome to Lost & Found Portal</h1>
-  <p>Report lost items or help others find theirs.</p>
+<!-- Live stats -->
+<div class="stats-row" id="statsRow">
+  <div class="stat-card">
+    <div class="stat-number" id="statLost">—</div>
+    <div class="stat-label">Items Reported Lost</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-number" id="statFound">—</div>
+    <div class="stat-label">Items Found &amp; Listed</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-number" id="statClaimed">—</div>
+    <div class="stat-label">Successful Reunions</div>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 <script src="script.js"></script>
+<script>
+  // Welcome message
+  const user = localStorage.getItem("user");
+  if (user) {
+    const name = user.split("@")[0];
+    document.getElementById("welcomeMsg").textContent =
+      `Hey ${name}! Report a lost item or help someone find theirs.`;
+  }
+
+  // Live stats
+  async function loadStats() {
+    const [lost, found] = await Promise.all([
+      supabase.from("lost_items").select("id, claimed_by"),
+      supabase.from("found_items").select("id, claimed_by")
+    ]);
+    if (lost.data) {
+      document.getElementById("statLost").textContent = lost.data.length;
+      const claimed = [...(lost.data || []), ...(found.data || [])].filter(i => i.claimed_by).length;
+      document.getElementById("statClaimed").textContent = claimed;
+    }
+    if (found.data) document.getElementById("statFound").textContent = found.data.length;
+  }
+  loadStats();
+
+  function logout() {
+    localStorage.removeItem("user");
+    window.location.href = "index.html";
+  }
+</script>
 </body>
 </html>
