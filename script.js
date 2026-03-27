@@ -42,12 +42,10 @@ window.searchItems = function (inputId, containerId) {
 };
 
 // ── 4. CLAIM ITEM ──────────────────────────────────────────
-// ✅ FIX: secret values are encoded to handle quotes & special chars
 window.claimItem = async function (id, table, secretField, secretValue) {
   const ans = prompt(`🔐 To verify ownership, enter the ${secretField}:`);
   if (!ans) return;
 
-  // ✅ Decode the encoded secret before comparing
   const decoded = decodeURIComponent(secretValue);
 
   if (ans.trim().toLowerCase() === decoded.trim().toLowerCase()) {
@@ -57,6 +55,7 @@ window.claimItem = async function (id, table, secretField, secretValue) {
       .eq("id", id);
 
     if (error) {
+      console.error("Claim error:", error);
       showToast("Error: " + error.message, "error");
     } else {
       showToast("✅ Verified! Owner has been notified.", "success");
@@ -72,7 +71,6 @@ window.fetchLost = async function () {
   const div = document.getElementById("lostItems");
   if (!div) return;
 
-  // Show loader
   div.innerHTML = `<div class="loader">
     <div class="loader-dot"></div>
     <div class="loader-dot"></div>
@@ -82,6 +80,7 @@ window.fetchLost = async function () {
   const { data, error } = await supabase.from("lost_items").select("*");
 
   if (error) {
+    console.error("fetchLost error:", error);
     div.innerHTML = `<div class="empty-state">
       <div class="empty-icon">⚠️</div>
       <p>Failed to load items: ${error.message}</p>
@@ -89,12 +88,12 @@ window.fetchLost = async function () {
     return;
   }
 
-  // Update count badge
   const countEl = document.getElementById("lostCount");
   if (countEl) countEl.textContent = `${data.length} item${data.length !== 1 ? "s" : ""}`;
 
   div.innerHTML = "";
 
+  // ✅ FIX: build visible list correctly, then loop visible (not data)
   const visible = data.filter(item =>
     !item.claimed_by || item.user === currentUser
   );
@@ -107,9 +106,9 @@ window.fetchLost = async function () {
     return;
   }
 
-  data.forEach(item => {
+  // ✅ FIX: was data.forEach — now correctly loops visible
+  visible.forEach(item => {
     if (!item.claimed_by) {
-      // ✅ FIX: encode secret detail to handle single quotes & special chars
       const encoded = encodeURIComponent(item.detail);
       div.innerHTML += `
         <div class="card">
@@ -149,6 +148,7 @@ window.fetchFound = async function () {
   const { data, error } = await supabase.from("found_items").select("*");
 
   if (error) {
+    console.error("fetchFound error:", error);
     div.innerHTML = `<div class="empty-state">
       <div class="empty-icon">⚠️</div>
       <p>Failed to load items: ${error.message}</p>
@@ -161,7 +161,12 @@ window.fetchFound = async function () {
 
   div.innerHTML = "";
 
-  if (data.length === 0) {
+  // ✅ FIX: build visible list, then loop it (not full data)
+  const visible = data.filter(item =>
+    !item.claimed_by || item.user === currentUser
+  );
+
+  if (visible.length === 0) {
     div.innerHTML = `<div class="empty-state">
       <div class="empty-icon">📭</div>
       <p>No found items listed yet.</p>
@@ -169,9 +174,9 @@ window.fetchFound = async function () {
     return;
   }
 
-  data.forEach(item => {
+  // ✅ FIX: was data.forEach — now correctly loops visible
+  visible.forEach(item => {
     if (!item.claimed_by) {
-      // ✅ FIX: encode answer to handle quotes & special chars
       const encoded = encodeURIComponent(item.answer);
       div.innerHTML += `
         <div class="card">
@@ -225,6 +230,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .insert([{ user: currentUser, message: msg }]);
 
       if (error) {
+        console.error("Feedback insert error:", error);
         showToast("Failed to send feedback: " + error.message, "error");
       } else {
         showToast("💬 Feedback sent! Thank you.", "success");
@@ -254,10 +260,13 @@ document.addEventListener("DOMContentLoaded", () => {
         detail:      document.getElementById("lostDetail").value
       };
 
-      const { error } = await supabase.from("lost_items").insert([item]);
+      console.log("Inserting lost item:", item); // ✅ debug log
+      const { data, error } = await supabase.from("lost_items").insert([item]).select();
       if (error) {
+        console.error("Lost insert error:", error);
         showToast("Error posting item: " + error.message, "error");
       } else {
+        console.log("Lost insert success:", data); // ✅ debug log
         showToast("📦 Lost item posted!", "success");
         lostForm.reset();
         fetchLost();
@@ -286,10 +295,13 @@ document.addEventListener("DOMContentLoaded", () => {
         answer:      document.getElementById("foundAnswer").value
       };
 
-      const { error } = await supabase.from("found_items").insert([item]);
+      console.log("Inserting found item:", item); // ✅ debug log
+      const { data, error } = await supabase.from("found_items").insert([item]).select();
       if (error) {
+        console.error("Found insert error:", error);
         showToast("Error posting item: " + error.message, "error");
       } else {
+        console.log("Found insert success:", data); // ✅ debug log
         showToast("✨ Found item posted!", "success");
         foundForm.reset();
         fetchFound();
