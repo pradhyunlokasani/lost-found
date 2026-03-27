@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Help</title>
+  <title>Help & Feedback</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -15,13 +15,19 @@
 </div>
 
 <div class="container">
-  <h2>Contact</h2>
-
-  <p>📞 8179971950</p>
-  <p>📧 pradhyunlokasani@gmail.com</p>
-
-  <h3>Feedback</h3>
-  <textarea placeholder="Enter your feedback..."></textarea>
+  <div class="center-box" style="margin-top: 20px;">
+    <h2>Contact Support</h2>
+    <p>📞 <b>Phone:</b> 8179971950</p>
+    <p>📧 <b>Email:</b> pradhyunlokasani@gmail.com</p>
+    
+    <hr>
+    
+    <h3>Submit Feedback</h3>
+    <form id="feedbackForm">
+      <textarea id="feedbackText" placeholder="How can we improve this portal?" required></textarea>
+      <button type="submit">Submit Feedback</button>
+    </form>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
