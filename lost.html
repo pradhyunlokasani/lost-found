@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Lost</title>
+  <title>Lost Items</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -15,19 +15,20 @@
 </div>
 
 <div class="container">
-  <h2>Lost Items</h2>
-
-  <input type="text" id="lostSearch" placeholder="Search lost items..." onkeyup="searchItems('lostSearch', 'lostItems')">
-
+  <h2>Report Lost Item</h2>
   <form id="lostForm">
-    <input id="lostName" placeholder="Item Name" required>
+    <input id="lostName" placeholder="Item Name (e.g. Blue Wallet)" required>
     <input id="lostColor" placeholder="Color" required>
-    <input id="lostLocation" placeholder="Location" required>
-    <textarea id="lostDescription" placeholder="Description" required></textarea>
-    <input id="lostDetail" placeholder="Secret Detail" required>
-    <button>Submit</button>
+    <input id="lostLocation" placeholder="Last Seen Location" required>
+    <textarea id="lostDescription" placeholder="General Description"></textarea>
+    <input id="lostDetail" placeholder="Secret Identifying Detail (e.g. 'Sticker of a cat on back')" required>
+    <button type="submit">Post Lost Item</button>
   </form>
 
+  <hr>
+  <h2>Lost Items Registry</h2>
+  <input type="text" id="lostSearch" placeholder="Search items..." onkeyup="searchItems('lostSearch', 'lostItems')">
+  
   <div id="lostItems"></div>
 </div>
 
