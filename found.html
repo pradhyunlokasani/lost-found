@@ -1,38 +1,77 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Found Items</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Found Items — Lost & Found Portal</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="navbar">
+<nav class="navbar">
   <a href="home.html">Home</a>
   <a href="lost.html">Lost</a>
-  <a href="found.html">Found</a>
+  <a href="found.html" style="color: var(--amber);">Found</a>
   <a href="help.html">Help</a>
-  <span class="nav-indicator"></span>
-</div>
+  <button class="logout-btn btn" onclick="logout()" style="margin-left:auto;">Logout</button>
+</nav>
 
 <div class="container">
-  <h2>Report Found Item</h2>
+
+  <!-- Report Form -->
+  <div class="section-header" style="margin-top: 10px;">
+    <h2>✨ Report a Found Item</h2>
+  </div>
+
   <form id="foundForm">
-    <input id="foundName" placeholder="Item Name" required>
-    <input id="foundLocation" placeholder="Found At Location" required>
-    <textarea id="foundDescription" placeholder="Description (Don't mention secret details)"></textarea>
-    <input id="foundQuestion" placeholder="Verification Question (e.g. 'What is the lockscreen wallpaper?')" required>
-    <input id="foundAnswer" placeholder="Correct Answer" required>
+    <label class="form-label">Item Name *</label>
+    <input id="foundName" placeholder="e.g. Water Bottle, Notebook" required>
+
+    <label class="form-label">Found At Location *</label>
+    <input id="foundLocation" placeholder="e.g. Seminar Hall, Parking Lot" required>
+
+    <label class="form-label">Description</label>
+    <textarea id="foundDescription" placeholder="Describe the item without mentioning any secret detail"></textarea>
+
+    <label class="form-label">Verification Question *</label>
+    <input id="foundQuestion" placeholder="e.g. What is the lockscreen wallpaper?" required>
+
+    <label class="form-label">🔒 Correct Answer * <small style="text-transform:none; font-size:.78rem;">(owner must answer this to claim)</small></label>
+    <input id="foundAnswer" placeholder="Your answer here" required>
+
     <button type="submit">Post Found Item</button>
   </form>
 
   <hr>
-  <h2>Found Items Registry</h2>
-  <input type="text" id="foundSearch" placeholder="Search items..." onkeyup="searchItems('foundSearch', 'foundItems')">
-  
-  <div id="foundItems"></div>
+
+  <!-- Registry -->
+  <div class="section-header">
+    <h2>Found Items Registry</h2>
+    <span class="item-count" id="foundCount">Loading…</span>
+  </div>
+
+  <div class="search-wrap">
+    <input type="text" id="foundSearch" placeholder="Search by name or location…"
+           onkeyup="searchItems('foundSearch', 'foundItems')">
+  </div>
+
+  <div id="foundItems">
+    <div class="loader">
+      <div class="loader-dot"></div>
+      <div class="loader-dot"></div>
+      <div class="loader-dot"></div>
+    </div>
+  </div>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 <script src="script.js"></script>
+<script>
+  function logout() {
+    localStorage.removeItem("user");
+    window.location.href = "index.html";
+  }
+</script>
 </body>
 </html>
