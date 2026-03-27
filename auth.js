@@ -1,5 +1,5 @@
 // ── auth.js ──────────────────────────────────────────────
-// Defensive login with visible error messages at every step
+// Fixed: removed .maybeSingle() — not supported in older Supabase CDN versions
 
 const SUPABASE_URL = "https://kilcvwapslcnjcrhhyfm.supabase.co";
 const SUPABASE_KEY = "sb_publishable_YRoTd89mkQwGzIX0QcaObg_WHo2sERX";
@@ -9,24 +9,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const msg  = document.getElementById("msg");
   if (!form) return;
 
-  // ── Step 1: Check Supabase CDN loaded ──
+  // Check Supabase CDN loaded
   if (typeof window.supabase === "undefined") {
-    showMsg(msg, "❌ Supabase library failed to load. Check your internet connection.", "red");
+    showMsg(msg, "❌ Supabase library failed to load. Check your internet.", "red");
     return;
   }
 
-  // ── Step 2: Create client once ──
+  // Create client once
   if (!window.supabaseClient) {
-    try {
-      window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    } catch (err) {
-      showMsg(msg, "❌ Could not connect to database: " + err.message, "red");
-      return;
-    }
+    window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   }
   const db = window.supabaseClient;
 
-  // ── Step 3: Handle form submit ──
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -34,47 +28,39 @@ document.addEventListener("DOMContentLoaded", () => {
     const password = document.getElementById("password").value.trim();
     const btn      = form.querySelector("button[type='submit']");
 
-    // Basic email check
+    // Email validation
     if (!email.endsWith("@student.nitw.ac.in")) {
-      showMsg(msg, "⚠️ Use your college email ending in @student.nitw.ac.in", "red");
+      showMsg(msg, "⚠️ Use your college email (@student.nitw.ac.in)", "red");
       return;
     }
 
-    // Password strength check
+    // Password strength
     const pattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&]).{6,}$/;
     if (!pattern.test(password)) {
-      showMsg(msg, "⚠️ Password needs 6+ chars, a number & a special character (@!#...)", "red");
+      showMsg(msg, "⚠️ Password needs 6+ chars, a letter, number & special char", "red");
       return;
     }
 
-    // Loading state
     btn.textContent = "Connecting…";
     btn.disabled = true;
     showMsg(msg, "", "");
 
     try {
-      // ── Step 4: Query users table ──
+      // ✅ Use .select() returning an array — no .single() or .maybeSingle()
       const { data, error } = await db
         .from("users")
         .select("*")
-        .eq("email", email)
-        .maybeSingle();
+        .eq("email", email);
 
       if (error) {
-        // Most common cause: RLS blocking reads, or wrong key
-        showMsg(
-          msg,
-          "❌ Database error: " + error.message +
-          " — Check Supabase RLS policy on the 'users' table (allow public read).",
-          "red"
-        );
+        showMsg(msg, "❌ Database error: " + error.message, "red");
         resetBtn(btn);
         return;
       }
 
-      if (data) {
-        // ── LOGIN ──
-        if (data.password === password) {
+      if (data && data.length > 0) {
+        // ── LOGIN — user exists ──
+        if (data[0].password === password) {
           localStorage.setItem("user", email);
           showMsg(msg, "✅ Logged in! Redirecting…", "green");
           setTimeout(() => window.location.href = "home.html", 700);
@@ -83,7 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
           resetBtn(btn);
         }
       } else {
-        // ── SIGNUP ──
+        // ── SIGNUP — new user ──
         const { error: insertError } = await db
           .from("users")
           .insert([{ email, password }]);
